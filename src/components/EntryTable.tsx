@@ -1,45 +1,32 @@
-// src/components/EntryTable.tsx
-
 import React from 'react';
 
-interface WorkoutEntry {
+interface DistanceEntry {
   date: string;
-  exercise: string;
-  duration: number;
-  calories: number;
+  distance: number;
 }
 
 interface EntryTableProps {
-  entries: WorkoutEntry[];
+  entries: DistanceEntry[];
   onDeleteEntry: (index: number) => void;
+  onEditInitiation: (index: number) => void;
 }
 
-const EntryTable: React.FC<EntryTableProps> = ({ entries, onDeleteEntry }) => {
+const EntryTable: React.FC<EntryTableProps> = ({ entries, onDeleteEntry, onEditInitiation }) => {
   return (
-    <table>
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Exercise</th>
-          <th>Duration (mins)</th>
-          <th>Calories</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {entries.map((entry, index) => (
-          <tr key={index}>
-            <td>{entry.date}</td>
-            <td>{entry.exercise}</td>
-            <td>{entry.duration}</td>
-            <td>{entry.calories}</td>
-            <td>
-              <button onClick={() => onDeleteEntry(index)}>Delete</button>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <div>
+      {entries.map((entry, index) => (
+        <div key={index} className="entry">
+          <span className="date">{entry.date}</span>
+          <span className="kilometers">{entry.distance.toFixed(2)} km</span>
+          <button className="edit-entry-button" onClick={() => onEditInitiation(index)}title="Edit"
+              >
+                ✎ </button>
+          <button className="delete-entry-button" onClick={() => onDeleteEntry(index)}title="Delete"
+              >
+                ✘ </button>
+        </div>
+      ))}
+    </div>
   );
 };
 

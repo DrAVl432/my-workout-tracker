@@ -1,74 +1,66 @@
-// src/components/EntryForm.tsx
+import React, { useState, useEffect } from 'react';
 
-import React, { useState } from 'react';
-
-interface WorkoutEntry {
+interface DistanceEntry {
   date: string;
-  exercise: string;
-  duration: number;
-  calories: number;
+  distance: number;
 }
 
 interface EntryFormProps {
-  onAddEntry: (entry: WorkoutEntry) => void;
+  onAddEntry: (entry: DistanceEntry) => void;
+  onEditEntry: (entry: DistanceEntry) => void;
+  editEntry: DistanceEntry | null;
 }
 
-const EntryForm: React.FC<EntryFormProps> = ({ onAddEntry }) => {
-  const [formState, setFormState] = useState<WorkoutEntry>({
-    date: '',
-    exercise: '',
-    duration: 0,
-    calories: 0,
-  });
+const EntryForm: React.FC<EntryFormProps> = ({ onAddEntry, onEditEntry, editEntry }) => {
+  const [date, setDate] = useState<string>('');
+  const [distance, setDistance] = useState<number>(0);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormState({
-      ...formState,
-      [name]: name === 'duration' || name === 'calories' ? Number(value) : value,
-    });
-  };
+  useEffect(() => {
+    if (editEntry) {
+      setDate(editEntry.date);
+      setDistance(editEntry.distance);
+    }
+  }, [editEntry]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onAddEntry(formState);
-    setFormState({ date: '', exercise: '', duration: 0, calories: 0 });
+
+    if (editEntry) {
+      onEditEntry({ date, distance });
+    } else {
+      onAddEntry({ date, distance });
+    }
+
+    setDate('');
+    setDistance(0);
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className="add-entry-form" onSubmit={handleSubmit}>
+<div className='input-data'>
+        <label htmlFor="date">Дата</label>
       <input
         type="date"
-        name="date"
-        value={formState.date}
-        onChange={handleChange}
+        className="input"
+        value={date}
+        onChange={(e) => setDate(e.target.value)}
         required
       />
-      <input
-        type="text"
-        name="exercise"
-        placeholder="Exercise"
-        value={formState.exercise}
-        onChange={handleChange}
-        required
-      />
+</div>
+<div className='input-distance'>
+      <label htmlFor="distance">Пройдено км</label>
       <input
         type="number"
-        name="duration"
-        placeholder="Duration (mins)"
-        value={formState.duration}
-        onChange={handleChange}
+        className="input"
+        value={distance}
+        onChange={(e) => setDistance(Number(e.target.value))}
+        placeholder="Distance (km)"
         required
       />
-      <input
-        type="number"
-        name="calories"
-        placeholder="Calories"
-        value={formState.calories}
-        onChange={handleChange}
-        required
-      />
-      <button type="submit">Add Entry</button>
+      </div>
+      <button type="submit" className="button">
+        {editEntry ? 'Ок' : 'Ок'}
+      </button>
     </form>
   );
 };
